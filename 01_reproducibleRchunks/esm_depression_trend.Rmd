@@ -152,8 +152,8 @@ p
 Because the plot is stored in an object (`p`), we can reuse it elsewhere
 (`ggsave()`, other documents) without re-running or copying any code.
 
-```{r save-plot, eval=FALSE}
-ggsave("fig_depression.pdf", p, width = 8, height = 4)
+```{r save-plot, eval=TRUE}
+ggsave("output/fig_depression.png", p, width = 8, height = 4)
 ```
 
 # Model
