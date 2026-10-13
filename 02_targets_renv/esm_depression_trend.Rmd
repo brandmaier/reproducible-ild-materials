@@ -1,0 +1,194 @@
+---
+title: "Towards reproducible data analysis of intensive longitudinal data in R: A use case demonstrating targets and renv"
+author: "Andreas M. Brandmaier"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 4, dpi = 150
+)
+```
+
+# Overview
+
+This document is part of the Open Materials accompanying the book chapter
+
+> Brandmaier, A. M. (in press). Towards reproducible data analysis of intensive
+> longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
+> *Handbook of intensive longitudinal data analysis*. Routledge.
+
+**Goal.** Demonstrate tools for reproducible research workflows with intensive
+longitudinal data. This version is built with the
+[`targets`](https://docs.ropensci.org/targets/) package: all computations
+(file loading, preprocessing, plotting, modeling) are **targets** defined in
+`_targets.R`, and this report only *reads* their results. Running
+`targets::tar_make()` re-runs exactly those steps whose code or inputs have
+changed and then re-renders this page.
+
+**Caveat.** The study has several phases, which are *not* modeled here. The
+analysis only illustrates the workflow; we draw no substantive conclusions.
+
+
+## Software and dependencies
+
+Package versions are documented and can be restored with
+[`renv`](https://rstudio.github.io/renv/). Run `renv::init()` once and
+`renv::snapshot()` after changing dependencies; collaborators then run
+`renv::restore()`. The full session information is printed at the end of this
+document.
+
+
+## Data
+
+Data from Kossakowski, Groot, Haslbeck, Borsboom, and Wichers (2017; *Journal of
+Open Psychology Data, 5*(1), [doi:10.5334/jopd.29](https://doi.org/10.5334/jopd.29);
+OSF: <https://osf.io/j4fg8>; CC BY 4.0). It is a single-case (N = 1)
+experience-sampling study with about 10 beeps per day over 239 days and 50
+items. The participant is male, aged 57, has a history of multiple episodes of
+major depression, and had used antidepressants for the previous 8.5 years. He
+monitored his momentary experiential states during a gradual discontinuation of
+his antidepressant. Depressive symptoms were additionally assessed **weekly**
+with the SCL-90-R depression subscale (variable `dep`).
+
+# The pipeline
+
+| Target | Step | Function (in `R/functions.R`) |
+|---|---|---|
+| `data_file` | file tracking (re-runs if the csv changes) | — |
+| `raw_data` | file loading | `read_esm()` |
+| `esm` | preprocessing: dates, sorting, day counter | `preprocess_esm()` |
+| `beeps` | weekly rating carried forward (for plotting) | `make_beeps()` |
+| `weekly` | one row per weekly assessment (for modeling) | `make_weekly()` |
+| `fig_depression` | plotting | `make_depression_plot()` |
+| `fig_file` | save figure as pdf | `save_plot()` |
+| `model` | modeling | `fit_trend_model()` |
+| `model_file` | save model as rds | `save_model()` |
+| `report` | this html page | `tarchetypes::tar_render()` |
+
+Package versions should additionally be pinned with
+[`renv`](https://rstudio.github.io/renv/) (`renv::init()`, `renv::snapshot()`,
+`renv::restore()`).
+
+# Reading the results of the pipeline
+
+`tar_read()` / `tar_load()` retrieve stored targets. `tar_render()` detects
+these calls and makes this report depend on exactly these targets: if, e.g.,
+only the plot code changes, only the plot and this page are rebuilt.
+
+```{r load-targets}
+library(targets)
+
+tar_load(c(raw_data, esm, weekly, fig_depression, model))
+```
+
+```{r data-sizes}
+n_beeps  <- nrow(raw_data)
+n_weekly <- nrow(weekly)
+```
+
+The data contain `r n_beeps` beeps and `r n_weekly` weekly depression
+assessments.
+
+# Plot
+
+The figure recreates the SCL-90-R depression subscale panel of Figure 1a in
+Kossakowski et al. (2017). It was built by the target `fig_depression`; here we
+simply display it. The dashed line is the linear trend of the weekly ratings,
+i.e., the same data and model as reported below.
+
+```{r fig-depression, fig.cap="Weekly SCL-90-R depression subscale (average item score) over the course of the study. The dashed line is the linear time trend estimated from the weekly assessments."}
+fig_depression
+```
+
+The same figure was also saved as a pdf by the target `fig_file`
+(`output/fig_depression.pdf`) and can be reused elsewhere without re-running
+any code.
+
+# Model
+
+The target `model` fits a simple linear model that estimates the time trend of
+the weekly depression ratings across **all** phases of the study, i.e., it
+tests only the linear component of change over time:
+
+```{r model-summary}
+summary(model)
+```
+
+The fitted model is also stored on disk by the target `model_file`
+(`output/model_esm.rds`).
+
+# Reporting results with `cocoon`
+
+The `cocoon` package formats model statistics so that they can be embedded
+directly into text. `format_stats(model)` returns a formatted string for the
+whole model; with `term`, the output is restricted to one term.
+
+## Whole-model statistics
+
+```{r format-model, results="asis"}
+cat(cocoon::format_stats(model))
+```
+
+## Statistics for a single term
+
+```{r format-term, results="asis"}
+cat(cocoon::format_stats(model, term = "week"))
+```
+
+## Inline use in running text
+
+The sentence below is written in R Markdown as
+``Depression ratings changed linearly over time (`r knitr::inline_expr('cocoon::format_stats(model, term = "week")')`).``
+and renders as:
+
+> Depression ratings changed linearly over time
+> (`r cocoon::format_stats(model, term = "week")`).
+
+The overall fit can be reported likewise: `r cocoon::format_stats(model)`.
+
+Because the numbers come from the `model` target, a change in the data, the
+preprocessing, or the model automatically flows through `tar_make()` into the
+figure, the tables, and every number in the text.
+
+# Appendix: the pipeline code
+
+## `_targets.R`
+
+```{r show-targets, echo=FALSE, results="asis"}
+cat("```r\n", paste(readLines("_targets.R"), collapse = "\n"), "\n```\n", sep = "")
+```
+
+## `R/functions.R`
+
+```{r show-functions, echo=FALSE, results="asis"}
+cat("```r\n", paste(readLines("R/functions.R"), collapse = "\n"), "\n```\n", sep = "")
+```
+
+## Inspecting the dependency graph
+
+Run the following interactively (not while building this report):
+
+```{r graph, eval=FALSE}
+targets::tar_visnetwork()
+```
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# References
+
+Kossakowski, J. J., Groot, P. C., Haslbeck, J. M. B., Borsboom, D., & Wichers,
+M. (2017). Data from "Critical slowing down as a personalized early warning
+signal for depression". *Journal of Open Psychology Data, 5*(1).
+https://doi.org/10.5334/jopd.29

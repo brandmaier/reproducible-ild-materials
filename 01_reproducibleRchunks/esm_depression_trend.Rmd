@@ -1,0 +1,235 @@
+---
+title: "Towards reproducible data analysis of intensive longitudinal data in R: A use case demonstrating R Markdown and reproducibleRchunks"
+author: "Andreas M. Brandmaier"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 4,
+  dpi = 150
+)
+
+library(reproducibleRchunks)
+```
+
+# Overview
+
+This document is part of the Open Materials accompanying the book chapter
+
+> Brandmaier, A. M. (in press). Towards reproducible data analysis of intensive
+> longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
+> *Handbook of intensive longitudinal data analysis*. Routledge.
+
+**Goal.** Demonstrate tools for reproducible research workflows with intensive
+longitudinal data. Specifically, we
+
+1. recreate a panel from Figure 1 of Kossakowski et al. (2017),
+2. fit a linear model for the time trend in the weekly depression ratings, and
+3. use the `cocoon` package to write the model statistics **directly into the
+   running text**, so that the numbers in the manuscript can never drift out of
+   sync with the analysis.
+
+**Important caveat.** The study has several phases, which are *not* modeled
+here. The analysis serves only as an illustration of the workflow; we draw no
+substantive conclusions.
+
+## Data
+
+We use the data from Kossakowski, Groot, Haslbeck, Borsboom, and Wichers (2017),
+"Data from 'Critical Slowing Down as a Personalized Early Warning Signal for
+Depression'", *Journal of Open Psychology Data, 5*(1),
+[doi:10.5334/jopd.29](https://doi.org/10.5334/jopd.29)
+(OSF: <https://osf.io/j4fg8>, license CC BY 4.0).
+
+The dataset is a single-case (N = 1) experience-sampling study with roughly
+1,470 momentary observations (about 10 beeps per day over 239 days, 50 items).
+The participant is male, aged 57, has a history of multiple episodes of major
+depression, and had been using antidepressants for the previous 8.5 years. He
+monitored his momentary experiential states over the course of a gradual
+discontinuation of his antidepressant. Depressive symptoms were additionally
+assessed **weekly** with the SCL-90-R depression subscale (variable `dep`).
+
+```{r libraries}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(cocoon)
+```
+
+# Load and preprocess data
+
+The data file is expected in `esm_data/ESMdata/ESMdata.csv`, relative to this
+document.
+
+```{r load-data}
+raw <- read.csv("data/ESMdata.csv")
+```
+
+Preprocessing steps:
+
+- parse the date and check that parsing did not produce missing values,
+- sort by date and beep number so that "first" means "earliest beep",
+- compute the day of the study (starting from zero).
+
+```{r preprocess}
+raw$date <- as.Date(raw$date, format = "%d/%m/%y")
+stopifnot(!anyNA(raw$date))
+
+raw <- raw[order(raw$date, raw$beepno), ]
+raw$day <- as.numeric(raw$date - min(raw$date))
+```
+
+The weekly depression rating is only recorded once per week and is missing at
+all other beeps. We create two versions of the data:
+
+- `beeps`: the weekly rating is carried forward to all following beeps. This is
+  used for the plot, which shows the rating as a step function over time.
+- `weekly`: **one row per actual weekly assessment**, derived from the
+  *unfilled* data. This is used for the model. (If we derived it from the
+  filled data, the first row of each week would often contain the previous
+  week's rating carried forward.)
+  
+Here, we use an R chunk of the type `reproducibleR` that adds an automated reproducibility check of the preprocessing step. 
+A reproduction report is automatically generated and inserted into the document.
+
+```{reproducibleR weekly-data}
+beeps <- raw |>
+  tidyr::fill(dep, .direction = "down")
+
+weekly <- raw |>
+  filter(!is.na(dep)) |>
+  distinct(date, dep, .keep_all = TRUE) |>
+  mutate(week = floor(day / 7) + 1)
+```
+
+```{r data-sizes, echo=FALSE}
+n_beeps  <- nrow(raw)
+n_weekly <- nrow(weekly)
+```
+
+The data contain `r n_beeps` beeps and `r n_weekly` weekly depression
+assessments.
+
+# Plot
+
+The following code recreates the SCL-90-R depression subscale panel of
+Figure 1a in Kossakowski et al. (2017). The dashed line is the linear trend of the weekly ratings, i.e., the same data and the same model that we report below.
+
+```{r fig-depression, fig.cap="Weekly SCL-90-R depression subscale (average item score) over the course of the study. The dashed line is the linear time trend estimated from the weekly assessments."}
+p <- ggplot(beeps, aes(x = date, y = dep)) +
+  geom_line(linewidth = 2, color = "#0171b6") +
+  geom_smooth(
+    data = weekly, method = "lm", formula = y ~ x,
+    color = "darkblue", linetype = "dashed", se = FALSE
+  ) +
+  scale_y_continuous(breaks = scales::breaks_width(0.2)) +
+  coord_cartesian(ylim = c(1, 2.8)) +
+  labs(
+    title = "SCL-90-R depression subscale",
+    x = "Date",
+    y = "Average item score"
+  ) +
+  theme_classic() +
+  theme(
+    panel.grid.major.y = element_line(color = "grey80", linewidth = 0.5),
+    panel.grid.minor.y = element_blank()
+  )
+
+p
+```
+
+Because the plot is stored in an object (`p`), we can reuse it elsewhere
+(`ggsave()`, other documents) without re-running or copying any code.
+
+```{r save-plot, eval=FALSE}
+ggsave("fig_depression.pdf", p, width = 8, height = 4)
+```
+
+# Model
+
+We fit a simple linear model to estimate the time trend of the weekly
+depression ratings across **all** phases of the study (which does not do justice to the design). It tests only the linear component of change in depression over time. Again, we use an R chunk of type `reproducibleR` to insert a reproduction test of the fitted model:
+
+```{reproducibleR model}
+model <- lm(dep ~ week, data = weekly)
+summary(model)
+```
+
+Save the fitted model so that downstream documents (e.g., the manuscript) can
+load it without re-fitting:
+
+```{r save-model}
+saveRDS(model, "output/model_esm.rds")
+```
+
+# Reporting results with `cocoon`
+
+Copying numbers from console output into a manuscript is error-prone. The
+`cocoon` package formats the statistics of a fitted model so that they can be
+embedded directly into text. The function `format_stats()` takes a model object
+and returns a formatted string; with the argument `term`, it restricts the
+output to a single model term.
+
+## Whole-model statistics
+
+```{r format-model, results="asis"}
+cat(cocoon::format_stats(model))
+```
+
+## Statistics for a single term
+
+```{r format-term, results="asis"}
+cat(cocoon::format_stats(model, term = "week"))
+```
+
+## Inline use in running text
+
+The real benefit comes from calling `cocoon` **inline**, i.e., inside the
+sentence. The following sentence is written in R Markdown as
+``Depression ratings changed linearly over time (`r knitr::inline_expr('cocoon::format_stats(model, term = "week")')`).``
+and renders as:
+
+> Depression ratings changed linearly over time
+> (`r cocoon::format_stats(model, term = "week")`).
+
+Likewise, the overall model fit can be reported as
+`r cocoon::format_stats(model)`.
+
+If the data, the preprocessing, or the model change, simply knit the document
+again: the figure, the table output, and every number in the text update
+automatically.
+
+## Putting it together in a manuscript
+
+In a manuscript (`.Rmd` or Quarto), the pattern is:
+
+1. run the analysis in code chunks (as above) and keep the model objects,
+2. reference results only through inline calls such as
+   `` `r knitr::inline_expr('cocoon::format_stats(model, term = "week")')` ``,
+3. include figures via chunks and `fig.cap`, never as pasted images,
+4. track the document, the data (or a pointer to it), and the `renv.lock` file
+   in version control.
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# References
+
+Kossakowski, J. J., Groot, P. C., Haslbeck, J. M. B., Borsboom, D., & Wichers,
+M. (2017). Data from "Critical slowing down as a personalized early warning
+signal for depression". *Journal of Open Psychology Data, 5*(1).
+https://doi.org/10.5334/jopd.29

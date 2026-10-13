@@ -1,0 +1,176 @@
+---
+title: "Towards reproducible data analysis of intensive longitudinal data in R: A use case demonstrating the repro approach"
+author: "Andreas M. Brandmaier"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+repro:
+  packages:
+    # pin GitHub packages to a commit hash (or tag); replace the placeholders
+    - aaronpeikert/repro@54666ed # adjust owner/repo to where cocoon lives
+    - cocoon  
+    - dplyr
+    - ggplot2
+    - tidyr
+  scripts:
+    - R/analysis.R
+  data:
+    raw: data/ESMdata.csv
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 8, fig.height = 4, dpi = 150)
+
+library(repro)
+# load the packages listed in the YAML header
+automate_load_packages()
+# register the external script(s) listed in the YAML header
+automate_load_scripts()
+# read the data file listed in the YAML header into an object named `raw`
+raw <- automate_load_data(raw, read.csv)
+```
+
+# Overview
+
+This document is part of the Open Materials accompanying the book chapter
+
+> Brandmaier, A. M. (in press). Towards reproducible data analysis of intensive
+> longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
+> *Handbook of intensive longitudinal data analysis*. Routledge.
+
+**Goal.** Demonstrate tools for reproducible research workflows with intensive
+longitudinal data. We
+
+1. recreate a panel from Figure 1 of Kossakowski et al. (2017),
+2. fit a linear model for the time trend in the weekly depression ratings, and
+3. use the `cocoon` package to write the model statistics **directly into the
+   running text**.
+
+**Caveat.** The study has several phases, which are *not* modeled here. The
+analysis only illustrates the workflow; we draw no substantive conclusions.
+
+## How this document is wired up
+
+The YAML header of this file contains a `repro:` block that declares
+
+- the **packages** the analysis needs (GitHub packages pinned to a commit),
+- the **script** with the analysis code (`R/analysis.R`), and
+- the **data** file (`data/ESMdata.csv`).
+
+`repro::automate()` reads this block and generates a `Dockerfile` (the
+environment) and a `Makefile` rule (the build recipe) from it. The analysis
+code itself lives in `R/analysis.R`; the empty chunks below pull it in by
+name, so the script and this report can never diverge. To reproduce the whole
+report on any machine with `make` and Docker (R is not needed):
+
+```
+make docker            # build the image once
+make all DOCKER=TRUE   # render this document inside the container
+```
+
+## Data
+
+Data from Kossakowski, Groot, Haslbeck, Borsboom, and Wichers (2017; *Journal of
+Open Psychology Data, 5*(1), [doi:10.5334/jopd.29](https://doi.org/10.5334/jopd.29);
+OSF: <https://osf.io/j4fg8>; CC BY 4.0). It is a single-case (N = 1)
+experience-sampling study with about 10 beeps per day over 239 days and 50
+items. The participant is male, aged 57, has a history of multiple episodes of
+major depression, and had used antidepressants for the previous 8.5 years. He
+monitored his momentary experiential states during a gradual discontinuation of
+his antidepressant. Depressive symptoms were additionally assessed **weekly**
+with the SCL-90-R depression subscale (variable `dep`).
+
+The data object `raw` was loaded in the setup chunk from the path given in the
+YAML header: it contains `r nrow(raw)` rows (beeps).
+
+# Preprocessing
+
+The code for this section is the chunk `preprocess` in `R/analysis.R`: it
+parses and checks the dates, sorts by date and beep number, adds a day counter,
+and creates `beeps`, in which the weekly rating is carried forward to all
+following beeps (used for plotting).
+
+```{r preprocess}
+```
+
+The weekly rating is only recorded once per week. The model needs **one row per
+actual weekly assessment**, which must be derived from the *unfilled* data
+(otherwise carried-forward values leak into the first row of each week):
+
+```{r weekly}
+```
+
+There are `r nrow(weekly)` weekly depression assessments.
+
+# Plot
+
+The figure recreates the SCL-90-R depression subscale panel of Figure 1a in
+Kossakowski et al. (2017). The dashed line is the linear trend of the weekly
+ratings.
+
+```{r plot, fig.cap="Weekly SCL-90-R depression subscale (average item score) over the course of the study. The dashed line is the linear time trend estimated from the weekly assessments."}
+```
+
+# Model
+
+A simple linear model estimates the time trend of the weekly depression ratings
+across **all** phases of the study. It tests only the linear component of
+change over time.
+
+```{r model}
+```
+
+Save the fitted model and the figure for use elsewhere (e.g., the manuscript):
+
+```{r save}
+```
+
+# Reporting results with `cocoon`
+
+The `cocoon` package formats model statistics so that they can be embedded
+directly into text. `format_stats(model)` returns a formatted string for the
+whole model; with `term`, the output is restricted to one term.
+
+## Whole-model statistics
+
+```{r format-model, results="asis"}
+cat(cocoon::format_stats(model))
+```
+
+## Statistics for a single term
+
+```{r format-term, results="asis"}
+cat(cocoon::format_stats(model, term = "week"))
+```
+
+## Inline use in running text
+
+The sentence below is written in R Markdown as
+``Depression ratings changed linearly over time (`r knitr::inline_expr('cocoon::format_stats(model, term = "week")')`).``
+and renders as:
+
+> Depression ratings changed linearly over time
+> (`r cocoon::format_stats(model, term = "week")`).
+
+The overall fit can be reported likewise: `r cocoon::format_stats(model)`.
+
+If the data, the code in `R/analysis.R`, or the model change, re-running
+`make all DOCKER=TRUE` updates the figure, the output, and every number in the
+text.
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# References
+
+Kossakowski, J. J., Groot, P. C., Haslbeck, J. M. B., Borsboom, D., & Wichers,
+M. (2017). Data from "Critical slowing down as a personalized early warning
+signal for depression". *Journal of Open Psychology Data, 5*(1).
+https://doi.org/10.5334/jopd.29

@@ -1,0 +1,7 @@
+RUN install2.r --error --skipinstalled \ 
+  cocoon \ 
+  dplyr \ 
+  ggplot2 \ 
+  tidyr
+RUN installGithub.r \ 
+  aaronpeikert/repro@54666ed

@@ -1,0 +1,19 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+read_esm|function|9518a3ee15189ef2
+preprocess_esm|function|e6849fa44a50f2e1
+make_beeps|function|2cf5e7dcc57e440a
+make_depression_plot|function|6565e95a4f3224d8
+save_plot|function|8aa956ef31e5d71e
+make_weekly|function|f7a4e80bbe0d47d0
+save_model|function|b65628b52540ccde
+fit_trend_model|function|40a28fcaa7830b85
+data_file|stem|0c456632e668e0fa|86fef8211f5d9d52|2c530c1562a7fbd1|-679625259|data/ESMdata.csv|t20738.3733685379s|s351002b|351002|file|local|vector|||0.734|Paket 'dplyr' wurde unter R Version 4.5.3 erstellt. Paket 'tidyr' wurde unter R Version 4.5.3 erstellt. Paket 'ggplot2' wurde unter R Version 4.5.3 erstellt. Paket 'cocoon' wurde unter R Version 4.5.2 erstellt|
+raw_data|stem|0201f9566b9f3b24|eb4e5c1281b22325|87a078244ce58ac8|-1101284392||t20738.6308452074s|s53957b|53957|rds|local|vector|||0.031||
+esm|stem|8ae20bdc83aac5a3|3011e5f1571b3e2f|785461d994617f6c|-2106300381||t20738.6308462483s|s54800b|54800|rds|local|vector|||0.015||
+weekly|stem|5494e0459b6eb570|21e6a5e6482bbedc|f516b77216abdf7c|-1581016647||t20738.6308466198s|s2727b|2727|rds|local|vector|||0.015||
+beeps|stem|892d79c42da63607|8f491bd0d301f9b9|35957ce60722a46e|-1174623496||t20738.6308472203s|s54719b|54719|rds|local|vector|||0||
+model|stem|e9970b19c318a820|bc665c1268a05e0b|f39978fbfcfc2770|808688450||t20738.6308479241s|s4497b|4497|rds|local|vector|||0||
+fig_depression|stem|2f7851137141db62|c3430e7af1286e9b|cca4a2b1c494b350|210163307||t20738.6308512214s|s487413b|487413|rds|local|vector|||0.094||
+model_file|stem|7956bc8094cc9117|a6c3fc7ec8ac2340|8b5fba6acb0e46ad|363483304|output/model_esm.rds|t20738.6308517072s|s4499b|4499|file|local|vector|||0||
+fig_file|stem|25418ed1835f8d07|b69075374ab3f8b4|72e5485548a7bb6f|1081266997|output/fig_depression.pdf|t20738.6308745494s|s6297b|6297|file|local|vector|||1.875||
+report|stem|d004aa0ef5eea500|d2628f679853f6d6|c46b5fe5cbc754ae|787668912|esm_depression_trend.html*esm_depression_trend.Rmd|t20738.6308978756s|s1021931b|1021931|file|local|vector|||1.937||
