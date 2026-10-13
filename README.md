@@ -38,6 +38,8 @@ All three demos
 > trend is a coarse summary, and the analysis serves only to illustrate the
 > workflows. We draw no substantive conclusions.
 
+![Figure: SCL-90-R Depressoin subscale over time](https://github.com/brandmaier/reproducible-ild-materials/blob/897b4d28a6954e7a87554d276029cc6a02c3bf5e/01_reproducibleRchunks/output/fig_depression.png)
+
 ## The dataset
 
 Kossakowski, J. J., Groot, P. C., Haslbeck, J. M. B., Borsboom, D., & Wichers,
