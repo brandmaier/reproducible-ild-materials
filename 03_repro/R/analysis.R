@@ -38,6 +38,7 @@ if (!exists("raw")) {
   library(tidyr)
   library(dplyr)
   library(ggplot2)
+  library(scales)
   raw <- read.csv("data/ESMdata.csv")
 }
 
@@ -73,7 +74,10 @@ p <- ggplot(beeps, aes(x = date, y = dep)) +
        x = "Date", y = "Average item score") +
   theme_classic() +
   theme(panel.grid.major.y = element_line(color = "grey80", linewidth = 0.5),
-        panel.grid.minor.y = element_blank())
+        panel.grid.minor.y = element_blank())+
+  scale_x_date(
+    labels = scales::label_date("%b %Y", locale = "en")
+  )
 p
 
 #----model----

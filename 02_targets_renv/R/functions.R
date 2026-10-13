@@ -59,6 +59,9 @@ make_depression_plot <- function(beeps, weekly) {
     ggplot2::theme(
       panel.grid.major.y = ggplot2::element_line(color = "grey80", linewidth = 0.5),
       panel.grid.minor.y = ggplot2::element_blank()
+    )+
+    scale_x_date(
+      labels = scales::label_date("%b %Y", locale = "en")
     )
 }
 

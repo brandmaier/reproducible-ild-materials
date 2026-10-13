@@ -65,6 +65,7 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(cocoon)
+library(scales)
 ```
 
 # Load and preprocess data
@@ -144,6 +145,9 @@ p <- ggplot(beeps, aes(x = date, y = dep)) +
   theme(
     panel.grid.major.y = element_line(color = "grey80", linewidth = 0.5),
     panel.grid.minor.y = element_blank()
+  )+
+  scale_x_date(
+    labels = scales::label_date("%b %Y", locale = "en")
   )
 
 p

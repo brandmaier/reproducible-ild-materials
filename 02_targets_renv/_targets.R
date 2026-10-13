@@ -21,7 +21,7 @@ tar_source("R")
 
 # packages that every target needs (cocoon is called in the report)
 tar_option_set(
-  packages = c("dplyr", "tidyr", "ggplot2", "cocoon")
+  packages = c("dplyr", "tidyr", "ggplot2", "cocoon","scales")
 )
 
 list(
