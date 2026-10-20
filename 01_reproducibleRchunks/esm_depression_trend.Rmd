@@ -22,7 +22,11 @@ knitr::opts_chunk$set(
 
 library(reproducibleRchunks)
 
+# use fingerprints instead of raw data (which is the 
+# package default)
 options(reproducibleRchunks.hashing = TRUE)
+# round numerical results to 6 digits after the decimal
+options(reproducibleRchunks.digits = 6)
 ```
 
 # Overview

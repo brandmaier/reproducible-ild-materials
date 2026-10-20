@@ -12,7 +12,7 @@
 <meta name="author" content="Andreas M. Brandmaier" />
 
 
-<title>Towards reproducible data analysis of intensive longitudinal data in R: A use case demonstrating R Markdown and reproducibleRchunks</title>
+<title>Reproducible Workflows for Intensive Longitudinal Data Analysis in R: A use case demonstrating R Markdown and reproducibleRchunks</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -2837,11 +2837,11 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">Towards reproducible data analysis of
-intensive longitudinal data in R: A use case demonstrating R Markdown
-and reproducibleRchunks</h1>
+<h1 class="title toc-ignore">Reproducible Workflows for Intensive
+Longitudinal Data Analysis in R: A use case demonstrating R Markdown and
+reproducibleRchunks</h1>
 <h4 class="author">Andreas M. Brandmaier</h4>
-<h4 class="date">13 Oktober 2026</h4>
+<h4 class="date">20 Oktober 2026</h4>
 
 </div>
 
@@ -2851,8 +2851,8 @@ and reproducibleRchunks</h1>
 <p>This document is part of the Open Materials accompanying the book
 chapter</p>
 <blockquote>
-<p>Brandmaier, A. M. (in press). Towards reproducible data analysis of
-intensive longitudinal data in R. In T. Koch, T. Lischetzke, &amp; J.
+<p>Brandmaier, A. M. (in press). Reproducible Workflows for Intensive
+Longitudinal Data Analysis in R. In T. Koch, T. Lischetzke, &amp; J.
 Holtmann (Eds.), <em>Handbook of intensive longitudinal data
 analysis</em>. Routledge.</p>
 </blockquote>
@@ -2938,13 +2938,15 @@ weekly &lt;- raw |&gt;
 <h5>
 Code Chunk Reproduction Report
 </h5>
+<p><strong>Creating reproduction file</strong> This seems to be the
+first run of the R Markdown file including reproducible chunks. Storing
+reproducibility information for variables:</p>
 <ul>
-<li><p>✅beeps: REPRODUCTION SUCCESSFUL</p></li>
-<li><p>✅weekly: REPRODUCTION SUCCESSFUL</p></li>
+<li>beeps</li>
+<li>weekly
+</div></li>
 </ul>
-</div>
 <p>The data contain 1476 beeps and 28 weekly depression assessments.</p>
-</div>
 <div id="plot" class="section level1">
 <h1>Plot</h1>
 <p>The following code recreates the SCL-90-R depression subscale panel
@@ -3019,14 +3021,16 @@ summary(model)</code></pre>
 <h5>
 Code Chunk Reproduction Report
 </h5>
+<p><strong>Creating reproduction file</strong> This seems to be the
+first run of the R Markdown file including reproducible chunks. Storing
+reproducibility information for variables:</p>
 <ul>
-<li>✅model: REPRODUCTION SUCCESSFUL</li>
+<li>model
+</div></li>
 </ul>
-</div>
 <p>Save the fitted model so that downstream documents (e.g., the
 manuscript) can load it without re-fitting:</p>
 <pre class="r"><code>saveRDS(model, &quot;output/model_esm.rds&quot;)</code></pre>
-</div>
 <div id="reporting-results-with-cocoon" class="section level1">
 <h1>Reporting results with <code>cocoon</code></h1>
 <p>Copying numbers from console output into a manuscript is error-prone.
@@ -3126,6 +3130,10 @@ images,</li>
 &amp; Wichers, M. (2017). Data from “Critical slowing down as a
 personalized early warning signal for depression”. <em>Journal of Open
 Psychology Data, 5</em>(1). <a href="https://doi.org/10.5334/jopd.29" class="uri">https://doi.org/10.5334/jopd.29</a></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 

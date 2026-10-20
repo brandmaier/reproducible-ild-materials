@@ -53,7 +53,7 @@
         {
           "type": "double",
           "attributes": {},
-          "value": [10]
+          "value": [6]
         },
         {
           "type": "list",
@@ -153,15 +153,15 @@
             "names": {
               "type": "character",
               "attributes": {},
-              "value": ["cocoon", "ggplot2", "dplyr", "tidyr", "reproducibleRchunks"]
+              "value": ["scales", "cocoon", "ggplot2", "dplyr", "tidyr", "reproducibleRchunks"]
             }
           },
-          "value": ["cocoon", "ggplot2", "dplyr", "tidyr", "reproducibleRchunks"]
+          "value": ["scales", "cocoon", "ggplot2", "dplyr", "tidyr", "reproducibleRchunks"]
         },
         {
           "type": "character",
           "attributes": {},
-          "value": ["ff5e5ec19483e55cee72416c897bebcd614fd416ae605eae0578d412d140cb8e"]
+          "value": ["b0c637a38be4ae8ed8b6b1b51d9a5d0cbfd19efc3cfa36a18bef45c156ead284"]
         }
       ]
     },
