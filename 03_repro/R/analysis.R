@@ -1,5 +1,5 @@
 #
-# Towards reproducible data analysis of intensive longitudinal data in R
+# Reproducible Workflows for Intensive Longitudinal Data Analysis in R
 # A Use Case
 #
 # Data:   Kossakowski, Groot, Haslbeck, Borsboom & Wichers (2017).
@@ -19,8 +19,8 @@
 # Author: Andreas M. Brandmaier <andreas.brandmaier@medicalschool-berlin.de>
 #
 # This script is part of the Open Materials accompanying the book chapter
-# Brandmaier, A. M. (in press). Towards reproducible data analysis of
-# intensive longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann
+# Brandmaier, A. M. (in press). Reproducible Workflows for Intensive
+# Longitudinal Data Analysis in R. In T. Koch, T. Lischetzke, & J. Holtmann
 # (Eds.), Handbook of intensive longitudinal data analysis. Routledge.
 #
 # HOW THIS FILE IS USED

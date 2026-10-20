@@ -1,5 +1,5 @@
 ---
-title: "Towards reproducible data analysis of intensive longitudinal data in R: A use case demonstrating the repro approach"
+title: "Reproducible Workflows for Intensive Longitudinal Data Analysis in R: A use case demonstrating the repro approach"
 author: "Andreas M. Brandmaier"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
@@ -38,8 +38,7 @@ raw <- automate_load_data(raw, read.csv)
 
 This document is part of the Open Materials accompanying the book chapter
 
-> Brandmaier, A. M. (in press). Towards reproducible data analysis of intensive
-> longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
+> Brandmaier, A. M. (in press). Reproducible Workflows for Intensive Longitudinal Data Analysis in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
 > *Handbook of intensive longitudinal data analysis*. Routledge.
 
 **Goal.** Demonstrate tools for reproducible research workflows with intensive

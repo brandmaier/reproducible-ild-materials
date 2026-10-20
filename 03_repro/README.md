@@ -1,7 +1,7 @@
 # Reproducible analysis of an intensive longitudinal depression time series
 
-Open Materials for Brandmaier (in press), *Towards reproducible data analysis of
-intensive longitudinal data in R*. Data: Kossakowski et al. (2017),
+Open Materials for Brandmaier (in press), *Reproducible Workflows for Intensive 
+Longitudinal Data Analysis in R*. Data: Kossakowski et al. (2017),
 doi:10.5334/jopd.29 (CC BY 4.0).
 
 ## Reproduce the report
