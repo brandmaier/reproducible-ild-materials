@@ -14,7 +14,7 @@
         "names": {
           "type": "character",
           "attributes": {},
-          "value": ["hashing", "hashing_algorithm", "hashing_package", "hashing_package_version", "digits", "R_version", "packages", "code_fingerprint"]
+          "value": ["hashing", "hashing_algorithm", "hashing_package", "hashing_package_version", "digits", "R_version", "packages", "reproducibleRchunks_package_version", "code_fingerprint"]
         }
       },
       "value": [
@@ -159,6 +159,23 @@
           "value": ["scales", "cocoon", "ggplot2", "dplyr", "tidyr", "reproducibleRchunks"]
         },
         {
+          "type": "list",
+          "attributes": {
+            "class": {
+              "type": "character",
+              "attributes": {},
+              "value": ["package_version", "numeric_version"]
+            }
+          },
+          "value": [
+            {
+              "type": "integer",
+              "attributes": {},
+              "value": [1, 2, 1]
+            }
+          ]
+        },
+        {
           "type": "character",
           "attributes": {},
           "value": ["b0c637a38be4ae8ed8b6b1b51d9a5d0cbfd19efc3cfa36a18bef45c156ead284"]
@@ -178,12 +195,12 @@
         {
           "type": "character",
           "attributes": {},
-          "value": ["92abbfd52b8c783bfb970d5f8043160d7511c771d6c23a1da1e40a1816a213da"]
+          "value": ["3027775da8c1343addb7b9355e24b5944e7da0c28dec7cc9c00df89ae03cbe54"]
         },
         {
           "type": "character",
           "attributes": {},
-          "value": ["8fe7e4d402f79ad1c974a22e77e2ee55a7e73b97aa1955f62dc897c1946c16ce"]
+          "value": ["f5f61d1cd59cc561da29823844dcdc17b000fe857b5d701b437d0d30b265a55d"]
         }
       ]
     }
