@@ -3,8 +3,7 @@
 This repository contains **three variants of the same analysis**. Each variant
 demonstrates different reproducibility approaches presented in the book chapter
 
-> Brandmaier, A. M. (in press). Towards reproducible data analysis of intensive
-> longitudinal data in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
+> Brandmaier, A. M. (in press). Reproducible Workflows for Intensive Longitudinal Data Analysis in R. In T. Koch, T. Lischetzke, & J. Holtmann (Eds.),
 > *Handbook of intensive longitudinal data analysis*. Routledge.
 
 The analysis itself is deliberately simple. What differs between the demos is
